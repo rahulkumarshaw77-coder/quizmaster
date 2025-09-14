@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Subjects</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+      min-height: 100vh;
+      color: #212529;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .navbar {
+      background: #fff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .page-title {
+      font-weight: 700;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    .search-bar input {
+      border-radius: 25px;
+      padding: 10px 20px;
+      border: 1px solid #ced4da;
+    }
+    .subject-card {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .subject-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+    .subject-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .btn-rounded {
+      border-radius: 20px;
+      font-weight: 600;
+      padding: 6px 18px;
+    }
+    .table {
+      color: #212529;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .table th {
+      background: #f1f3f5;
+    }
+    .table td {
+      background: #ffffff;
+    }
+    .table td, .table th {
+      vertical-align: middle;
+    }
+    .btn-sm {
+      border-radius: 15px;
+      font-size: 0.85rem;
+    }
+    .add-btn {
+      margin-top: 15px;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-light px-4">
+    <a class="navbar-brand fw-bold text-dark" href="#">Admin Panel</a>
+    <div>
+      <a href="/admin_summary" class="btn btn-outline-secondary me-2">Profile</a>
+      <a href="/logout" class="btn btn-danger">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Container -->
+  <div class="container py-5">
+    <h2 class="page-title text-center">Manage Subjects</h2>
+
+    <!-- Search + Add -->
+     <form action="/search_subjects" method="GET">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div class="search-bar flex-grow-1 me-3">
+        <input type="text" class="form-control" name="subject_name"placeholder="Search subjects...">
+      </div>
+      <button type="button" class="btn btn-primary add-btn" data-bs-toggle="modal" data-bs-target="#addSubjectModal">Add Subject</button>
+    </div>
+    </form>
+    {% for subject in subjects %}
+    <!-- Subject Card Example -->
+    <div class="subject-card">
+      <div class="subject-header">
+        <h4>Subject:{{subject.subject_name}} </h4>
+        <div>
+        <button class="btn btn-primary btn-rounded" data-bs-toggle="modal" data-bs-target="#editSubjectModal{{ subject.id }}">Edit Subject</button>
+          <a href="/delete_subject/{{subject.id}}" class="btn btn-danger btn-rounded">Delete Subject</a>
+        </div>
+      </div>
+
+      
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th>Chapter Id</th>
+            <th>Chapter Name</th>
+            <th>Description</th>
+            <th style="width: 150px;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+            {%for chapter in subject.chapters%}
+          <tr>
+            <td>{{chapter.id}}</td>
+            <td>{{chapter.chapter_name}}</td>
+            <td>{{chapter.description}} </td>
+            <td>
+              <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editChapterModal{{ chapter.id }}">Edit</button>
+              <a href="/delete_chapter/{{chapter.id}}" class="btn btn-danger btn-sm">Delete</a>
+            </td>
+          </tr>
+            
+            {% endfor %}
+            <button class="btn btn-success btn-rounded"
+              data-bs-toggle="modal"
+              data-bs-target="#addChapterModal{{ subject.id }}">
+        <i class="fa-solid fa-plus"></i> Add Chapter
+      </button>
+        </tbody>
+      </table>
+    
+    </div>
+    <!-- Edit Subject Modal -->
+    <div class="modal fade" id="editSubjectModal{{ subject.id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="/edit_subject/{{subject.id}}">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Subject</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Subject Name</label>
+            <input type="text" name="subject_name" class="form-control" value="{{ subject.subject_name }}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" name="description" class="form-control" value="{{ subject.description }}" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-success">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+    <!-- Add Chapter Modal -->
+<div class="modal fade" id="addChapterModal{{ subject.id }}" tabindex="-1" aria-labelledby="addChapterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content chapter-modal">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="addChapterModalLabel">
+          <i class="fa-solid fa-layer-group me-2"></i> Add New Chapter
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form action="/add_chapter/{{subject.id}}" method="POST">
+        <div class="modal-body">
+          <!-- Chapter Name -->
+          <div class="mb-3">
+            <label for="chapterName" class="form-label">Chapter Name</label>
+            <input type="text" class="form-control" id="chapter_name" name="chapter_name" required>
+          </div>
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="chapterDesc" class="form-label">Description</label>
+            <textarea class="form-control" id="chapterDesc" name="description" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Chapter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Trigger Button -->
+
+
+<!-- Bootstrap + FontAwesome -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    {%endfor%}
+    
+    {% for subject in subjects %}
+    {% for chapter in subject.chapters %}
+    <!-- Edit Chapter Modal -->
+    <div class="modal fade" id="editChapterModal{{ chapter.id }}" tabindex="-1" aria-labelledby="editChapterModalLabel{{ chapter.id }}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content chapter-modal">
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="editChapterModalLabel{{ chapter.id }}">
+              <i class="fa-solid fa-pencil me-2"></i> Edit
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <form action="/edit_chapter/{{chapter.id}}" method="POST">
+            <div class="modal-body">
+              <!-- Chapter Name -->
+              <div class="mb-3">
+                <label for="chapter_name" class="form-label">Chapter Name</label>
+                <input type="text" name="chapter_name" class="form-control" id="chapter_name" value="{{ chapter.chapter_name }}" required>
+              </div>
+              <!-- Description -->
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <input type="text" name="description" class="form-control" id="description" value="{{ chapter.description }}" required>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {%endfor%}
+    {%endfor%}
+   <!-- Add Subject Modal -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content subject-modal">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="addSubjectModalLabel">
+          <i class="fa-solid fa-book me-2"></i> Add New Subject
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form action="/add_subject" method="POST">
+        <div class="modal-body">
+          <!-- Subject Name -->
+          <div class="mb-3">
+            <label for="subjectName" class="form-label">Subject Name</label>
+            <input type="text" class="form-control" id="subjectName" name="subject_name" required>
+          </div>
+          <!-- Description -->
+          <div class="mb-3">
+            <label for="subjectDesc" class="form-label">Description</label>
+            <textarea class="form-control" id="subjectDesc" name="description" rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Trigger Button -->
+<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+  <i class="fa-solid fa-plus"></i> Add Subject
+</button>
+
+<!-- Bootstrap + FontAwesome -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+  /* Modal Custom Styles */
+  .subject-modal {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0px 6px 20px rgba(0,0,0,0.2);
+    animation: fadeInUp 0.4s ease;
+  }
+  .subject-modal .modal-header {
+    background: linear-gradient(135deg, #0d6efd, #4dabf7);
+    color: #fff;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+  }
+  .subject-modal .modal-footer {
+    background: #f8f9fa;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+  }
+  .subject-modal .form-control {
+    border-radius: 10px;
+    box-shadow: none;
+    border: 1px solid #ced4da;
+    transition: all 0.2s ease;
+  }
+  .subject-modal .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0px 0px 8px rgba(13,110,253,0.3);
+  }
+  /* Animation */
+  @keyframes fadeInUp {
+    from {
+      transform: translateY(30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+</style>
+
+</body>
+</html>

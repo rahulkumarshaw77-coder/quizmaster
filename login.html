@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #141E30, #243B55);
+    }
+
+    .login-box {
+      position: relative;
+      width: 450px;   /* enlarged */
+      padding: 50px;  /* more padding */
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6);
+      text-align: center;
+      color: #fff;
+    }
+
+    .login-box h2 {
+      margin-bottom: 25px;
+      font-size: 2rem;
+      letter-spacing: 1.2px;
+      color: #00c6ff;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border: none;
+      outline: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 1rem;
+    }
+    .login-box input:focus {
+      background: rgba(255, 255, 255, 0.35);
+      box-shadow: 0 0 10px #00c6ff;
+    }
+
+    .login-box button,
+    .login-box input[type="submit"] {
+      width: 100%;
+      padding: 14px;
+      margin-top: 18px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #00c6ff, #0072ff);
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .login-box button:hover,
+    .login-box input[type="submit"]:hover {
+      background: linear-gradient(90deg, #0072ff, #00c6ff);
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>Login Test Portal</h2>
+    <form action="/login" method="POST">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <input type="submit" value="Login">
+    </form>
+  </div>
+</body>
+</html>

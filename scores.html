@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Report Card</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Poppins", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(270deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
+      background-size: 800% 800%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .report-card {
+      width: 90%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+      padding: 30px;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .report-card h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-weight: 700;
+      color: #2c3e50;
+    }
+
+    .table thead {
+      background: #2c3e50;
+      color: #fff;
+    }
+
+    .table tbody tr {
+      transition: transform 0.2s ease, background-color 0.3s ease;
+    }
+
+    .table tbody tr:hover {
+      transform: scale(1.02);
+      background-color: #fdfdfd;
+    }
+
+    .score-badge {
+      font-weight: bold;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      display: inline-block;
+    }
+
+    .score-high { background: #d4edda; color: #155724; }
+    .score-medium { background: #fff3cd; color: #856404; }
+    .score-low { background: #f8d7da; color: #721c24; }
+
+    .footer-note {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 20px;
+      color: #495057;
+      animation: fadeIn 2s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="report-card">
+    <h1>📊 Report Card</h1>
+    <table class="table table-bordered text-center align-middle">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Chapter</th>
+          <th>Score</th>
+          <th>Percentage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for score in scores %}
+        {% set total = score.quiz.questions | length %}
+        {% if total > 0 %}
+          {% set percent = (score.total_score / total * 100) | round(0) %}
+        {% else %}
+          {% set percent = 0 %}
+        {% endif %}
+        <tr>
+          <td>{{ score.quiz.chapter.subject.subject_name }}</td>
+          <td>{{ score.quiz.chapter.chapter_name }}</td>
+          <td>
+            <span class="score-badge 
+              {% if percent >= 75 %}score-high
+              {% elif percent >= 50 %}score-medium
+              {% else %}score-low
+              {% endif %}">
+              {{ score.total_score }}/{{ total }}
+            </span>
+          </td>
+          <td>{{ percent }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="footer-note">
+      🌟 Keep up the good work! Every quiz makes you better 🚀
+    </div>
+  </div>
+</body>
+</html>
